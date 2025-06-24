@@ -7,5 +7,6 @@ include:
   - infra/compose.yaml
   # --- bots ---
   - bots/pc-tele-monitor-ai/compose.yaml
+  - bots/sphynx-cats-crm-bot/compose.yaml
   # --- sites ---
   - sites/sphynx-cattery-website/compose.yaml
