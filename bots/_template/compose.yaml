@@ -1,0 +1,18 @@
+# Template long-polling Telegram bot. Copy to bots/<name>/ and edit.
+# No public ingress: Telegram bots reach out themselves.
+services:
+  TEMPLATE_BOT:
+    build: .
+    container_name: TEMPLATE_BOT
+    restart: unless-stopped
+    env_file: ../../.env
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      # - BOT_TOKEN=${MYBOT_TOKEN}
+    networks:
+      - internal
+
+networks:
+  internal:
+    external: true
+    name: homelab_internal

@@ -1,0 +1,12 @@
+{
+    admin off
+    # email you@example.com   # uncomment when a real domain + ACME is set up
+}
+
+# Default catch-all until the domain + per-site configs exist.
+:80 {
+    respond "homelab caddy: up. no site configured for this host yet." 200
+}
+
+# Per-site configs: drop <name>.caddy files into sites.d/ (see sites/_template).
+import sites.d/*.caddy

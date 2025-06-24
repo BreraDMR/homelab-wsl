@@ -1,0 +1,11 @@
+# homelab root aggregator.
+# `docker compose up -d` here brings up the whole lab.
+# Networks are external/shared — run bin/bootstrap.sh once first.
+name: homelab
+
+include:
+  - infra/compose.yaml
+  # --- sites (add as they go live) ---
+  # - sites/example/compose.yaml
+  # --- bots (add as they go live) ---
+  # - bots/mybot/compose.yaml

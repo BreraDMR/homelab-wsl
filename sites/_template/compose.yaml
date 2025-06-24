@@ -1,0 +1,15 @@
+# Template static site. Copy this folder to sites/<name>/ and edit.
+services:
+  TEMPLATE_SITE:
+    image: nginx:alpine
+    container_name: TEMPLATE_SITE
+    restart: unless-stopped
+    volumes:
+      - ./public:/usr/share/nginx/html:ro
+    networks:
+      - edge
+
+networks:
+  edge:
+    external: true
+    name: homelab_edge
