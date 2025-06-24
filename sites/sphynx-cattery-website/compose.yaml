@@ -12,8 +12,8 @@ services:
     depends_on:
       - sphynx-db
     networks:
-      - edge       # reached by central Caddy
-      - backend    # talks to its db
+      - edge
+      - backend
 
   sphynx-db:
     image: mariadb:11
@@ -25,6 +25,18 @@ services:
       - ./app/site/database.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     networks:
       - backend
+
+  # Free Cloudflare quick tunnel: new random https://*.trycloudflare.com URL each start.
+  # bin/publish-site-url.sh grabs the URL and writes it to the site repo README.
+  sphynx-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: sphynx-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://sphynx-site:80
+    depends_on:
+      - sphynx-site
+    networks:
+      - edge
 
 volumes:
   sphynx_db_data:
