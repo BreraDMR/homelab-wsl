@@ -1,4 +1,17 @@
-# homelab-wsl
+<div align="center">
+
+# 🏠 homelab-wsl
+
+**My whole home lab as one Docker-Compose repo — sites, Telegram bots, a reverse proxy and a shared local LLM, running headless inside WSL2.**
+
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=for-the-badge)](compose.yaml)
+[![Docker Compose](https://img.shields.io/badge/Compose-multi--stack-2496ED?logo=docker&logoColor=white&style=for-the-badge)](compose.yaml)
+[![Caddy](https://img.shields.io/badge/Caddy-reverse%20proxy-1F88C0?logo=caddy&logoColor=white&style=for-the-badge)](infra/caddy/Caddyfile)
+[![Ollama](https://img.shields.io/badge/Ollama-shared%20LLM-000000?logo=ollama&logoColor=white&style=for-the-badge)](infra/)
+[![WSL2](https://img.shields.io/badge/WSL2-Ubuntu-E95420?logo=ubuntu&logoColor=white&style=for-the-badge)](#hardware--constraints)
+[![Cloudflare Tunnel](https://img.shields.io/badge/Cloudflare-Tunnel-F38020?logo=cloudflare&logoColor=white&style=for-the-badge)](#)
+
+</div>
 
 A single Docker-Compose repo that runs my whole home lab — several websites,
 several Telegram bots, a reverse proxy and a shared local LLM — as containers
