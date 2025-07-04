@@ -6,16 +6,41 @@ services:
       dockerfile: docker/php/Dockerfile
     container_name: eshop-php
     restart: unless-stopped
-    environment:
+    environment: &app_env
       APP_ENV: prod
       APP_DEBUG: "0"
       APP_SECRET: "${APP_SECRET}"
       DATABASE_URL: "postgresql://eshop:eshop@database:5432/eshop?serverVersion=16&charset=utf8"
       PAYMENT_GATEWAY: fake
+      REDIS_URL: "redis://redis:6379"
+      MESSENGER_TRANSPORT_DSN: "amqp://eshop:eshop@rabbitmq:5672/%2f/messages"
+      MAILER_DSN: "smtp://mailer:1025"
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      SEARCH_INDEXING_ENABLED: "1"
     volumes:
       - ./app:/var/www/app
     depends_on:
       database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [eshopnet]
+  worker:
+    build:
+      context: ./app
+      dockerfile: docker/php/Dockerfile
+    container_name: eshop-worker
+    restart: unless-stopped
+    command: php bin/console messenger:consume async --time-limit=3600 -v
+    environment: *app_env
+    volumes:
+      - ./app:/var/www/app
+    depends_on:
+      database:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     networks: [eshopnet]
   nginx:
@@ -42,6 +67,48 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks: [eshopnet]
+  redis:
+    image: redis:7-alpine
+    container_name: eshop-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [eshopnet]
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: eshop-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: eshop
+      RABBITMQ_DEFAULT_PASS: eshop
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [eshopnet]
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    container_name: eshop-elasticsearch
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [eshopnet]
+  mailer:
+    image: axllent/mailpit
+    container_name: eshop-mailpit
+    restart: unless-stopped
     networks: [eshopnet]
   tunnel:
     image: ngrok/ngrok:latest
