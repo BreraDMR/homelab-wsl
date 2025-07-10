@@ -19,6 +19,10 @@ services:
     image: ollama/ollama:latest
     container_name: ollama
     restart: unless-stopped
+    # Published so Cline/other tools on the tailnet can reach Ollama at
+    # http://<tailscale-ip>:11434 (this box only; the tailnet is private).
+    ports:
+      - "11434:11434"
     environment:
       # Only one model resident at a time (a 30b tier ~18GB cannot coexist with
       # another). Idle models unload to free RAM for the other bots.
