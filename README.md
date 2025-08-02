@@ -115,8 +115,12 @@ docker compose up -d          # bring up infra + every included stack
 Host is a **Ryzen 7 5700G** (Vega iGPU, no discrete GPU), so Ollama is
 **CPU-only**; ~16 vCPU / ~21 GB RAM are given to WSL — fine for small quantized
 models (e.g. `qwen2.5:3b`, and `qwen2.5:14b` for jobs that want more quality).
-`OLLAMA_MAX_LOADED_MODELS=2` keeps both resident so consumers can switch
-without a reload stall.
+
+`OLLAMA_MAX_LOADED_MODELS=1`: with ~21 GB given to WSL, a 14b model and
+anything else resident at the same time pushes the box into swap, and a
+swapping Ollama is slower than a reload. One model stays loaded, the rest
+unload on idle. The bots ask for their own `keep_alive` per request, so a
+conversation in progress keeps its model warm anyway.
 
 ## Notes
 
