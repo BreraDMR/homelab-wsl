@@ -4,8 +4,11 @@
 # Reads logs only since the container's current start, so a stale URL from a
 # previous container run (logs persist across restarts) is never picked up.
 set -uo pipefail
-APP="$HOME/homelab/sites/sphynx-cattery-website/app"
-CONTAINER="sphynx-tunnel"
+# Overridable so the script also works from a clone that isn't in ~/homelab.
+HOMELAB_ROOT="${HOMELAB_ROOT:-$HOME/homelab}"
+SITE="${SITE:-sphynx-cattery-website}"
+APP="$HOMELAB_ROOT/sites/$SITE/app"
+CONTAINER="${CONTAINER:-sphynx-tunnel}"
 README="$APP/README.md"
 MARKER="<!-- live-url -->"
 
