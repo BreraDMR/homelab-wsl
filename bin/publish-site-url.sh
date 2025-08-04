@@ -13,8 +13,11 @@ README="$APP/README.md"
 MARKER="<!-- live-url -->"
 
 STARTED=$(docker inspect -f '{{.State.StartedAt}}' "$CONTAINER" 2>/dev/null || true)
+# The tunnel usually prints its URL within ten seconds; two minutes is the
+# outside case where cloudflared retries a few times first.
+WAIT_TRIES="${WAIT_TRIES:-60}"
 URL=""
-for i in $(seq 1 60); do
+for i in $(seq 1 "$WAIT_TRIES"); do
   if [ -n "$STARTED" ]; then
     URL=$(docker logs --since "$STARTED" "$CONTAINER" 2>&1 | grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' | tail -1)
   else
