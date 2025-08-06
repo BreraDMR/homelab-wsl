@@ -5,6 +5,9 @@
 
 # Default catch-all until the domain + per-site configs exist.
 :80 {
+    # /healthz answers before any site config is imported, so a monitor can
+    # tell "caddy is down" from "this host has no site yet".
+    respond /healthz "ok" 200
     respond "homelab caddy: up. no site configured for this host yet." 200
 }
 
