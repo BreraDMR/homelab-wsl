@@ -10,6 +10,13 @@ docker compose ps --format 'table {{.Service}}\t{{.Status}}\t{{.Ports}}' 2>/dev/
   || echo "compose not answering - is docker running?"
 
 echo
+echo "== volumes =="
+for v in $(docker volume ls -q --filter name=homelab); do
+  size=$(docker run --rm -v "$v":/v alpine du -sh /v 2>/dev/null | cut -f1)
+  printf '%-28s %s\n' "$v" "${size:-?}"
+done
+
+echo
 echo "== networks =="
 for net in homelab_edge homelab_internal; do
   if docker network inspect "$net" >/dev/null 2>&1; then
