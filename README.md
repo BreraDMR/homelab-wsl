@@ -87,6 +87,7 @@ the edge network cannot reach Ollama.
 | `sites/_template`, `bots/_template` | Copy-to-create templates for a new service. |
 | `bin/bootstrap.sh` | Creates the shared external Docker networks (idempotent). |
 | `bin/publish-site-url.sh` | Grabs the Cloudflare-tunnel URL and writes it into a site's README. |
+| `bin/status.sh` | One screen: containers, volume sizes, whether the shared networks exist. |
 
 ## First-time setup
 
