@@ -123,6 +123,23 @@ swapping Ollama is slower than a reload. One model stays loaded, the rest
 unload on idle. The bots ask for their own `keep_alive` per request, so a
 conversation in progress keeps its model warm anyway.
 
+## Backups
+
+The repo holds no state, so backing up the lab means backing up the Docker
+volumes and the gitignored `.env`:
+
+```sh
+docker run --rm -v ollama_data:/v -v "$PWD":/out alpine \
+  tar czf /out/ollama_data.tgz -C /v .
+```
+
+Ollama's volume is the big one and the least worth keeping — the models
+re-download. What actually matters is each stack's `data/` and the `.env`
+files, which are small enough to copy by hand.
+
+Restoring is the same command with `tar xzf` into a fresh volume, then
+`docker compose up -d`.
+
 ## Notes
 
 - This repo is intentionally **secret-free**: no tokens, no passwords, no app
