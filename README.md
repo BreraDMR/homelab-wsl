@@ -123,6 +123,18 @@ swapping Ollama is slower than a reload. One model stays loaded, the rest
 unload on idle. The bots ask for their own `keep_alive` per request, so a
 conversation in progress keeps its model warm anyway.
 
+## Updating
+
+```sh
+docker compose pull            # new images for everything included
+docker compose up -d           # recreate only what changed
+docker image prune -f          # reclaim the layers of the old ones
+```
+
+`pull` on the whole lab drags Ollama's image too, which is large; pull one
+service by name when that matters. App code is a `git pull` inside the
+service's `app/` clone plus `docker compose up -d --build <service>`.
+
 ## Backups
 
 The repo holds no state, so backing up the lab means backing up the Docker
