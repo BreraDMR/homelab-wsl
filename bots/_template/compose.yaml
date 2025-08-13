@@ -11,6 +11,13 @@ services:
       # - BOT_TOKEN=${MYBOT_TOKEN}
     networks:
       - internal
+    logging:
+      # Ten services with uncapped json logs will fill the disk eventually,
+      # and on WSL that takes the whole VM down with it.
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   internal:

@@ -8,6 +8,11 @@ services:
       - ./public:/usr/share/nginx/html:ro
     networks:
       - edge
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   edge:
