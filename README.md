@@ -160,3 +160,9 @@ Restoring is the same command with `tar xzf` into a fresh volume, then
 - It documents a personal learning lab, not a production setup — but the
   patterns (per-service containers, network isolation, templated onboarding,
   headless auto-start) are the real, transferable part.
+
+## License
+
+Licensed under [PolyForm Noncommercial 1.0.0](LICENSE) — free for personal,
+educational, and other noncommercial use. Commercial use requires a separate
+license; contact damir.brera.eb@gmail.com.
