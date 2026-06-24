@@ -1,0 +1,30 @@
+# Deploy wrapper for sphynx-cats-crm-bot (Telegram CRM for kitten cards).
+# App code is the clone in ./app (gitignored; `git -C app pull` to update).
+#
+# Unlike most bots in this lab, this one does NOT use the shared root
+# .env -- it needs its own TELEGRAM_BOT_TOKEN/OWNER_TELEGRAM_ID distinct
+# from pc-tele-monitor-ai's, so a name collision on the generic
+# TELEGRAM_BOT_TOKEN key would break one of the two bots. Runtime config
+# lives in bot.env (gitignored) instead.
+services:
+  sphynx-cats-crm-bot:
+    build:
+      context: ./app
+    container_name: sphynx-cats-crm-bot
+    restart: unless-stopped
+    env_file: bot.env
+    environment:
+      - DB_PATH=/app/data/sphynx_crm_bot.db
+    volumes:
+      - ./data:/app/data
+    networks:
+      - internal
+      - edge
+
+networks:
+  internal:
+    external: true
+    name: homelab_internal
+  edge:
+    external: true
+    name: homelab_edge

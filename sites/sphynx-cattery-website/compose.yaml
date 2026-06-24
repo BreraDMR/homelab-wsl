@@ -11,6 +11,11 @@ services:
     env_file: site.env
     depends_on:
       - sphynx-db
+    volumes:
+      # Uploaded kitten photos (via the Telegram bot's POST to api/cats.php)
+      # land here at runtime -- without this volume they'd be lost on every
+      # rebuild, since site.Dockerfile COPYs the app code into the image.
+      - sphynx_uploads:/var/www/html/assets/images/cats
     networks:
       - edge
       - backend
@@ -40,6 +45,7 @@ services:
 
 volumes:
   sphynx_db_data:
+  sphynx_uploads:
 
 networks:
   edge:
