@@ -1,0 +1,23 @@
+# Deploy wrapper for the pc-tele-monitor-ai bot.
+# App code is the clone in ./app (gitignored; `git -C app pull` to update).
+services:
+  pc-tele-monitor-ai:
+    build:
+      context: ./app
+    container_name: pc-tele-monitor-ai
+    env_file: ../../.env
+    environment:
+      - OLLAMA_URL=http://ollama:11434          # was host.docker.internal under Docker Desktop
+      - DB_PATH=/app/data/system_monitor_bot.db
+      - WHISPER_MODEL_DIR=/app/data/whisper_models
+      - MONITOR_DISK_PATH=/
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    networks:
+      - internal
+
+networks:
+  internal:
+    external: true
+    name: homelab_internal
