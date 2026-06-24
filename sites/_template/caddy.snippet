@@ -1,0 +1,4 @@
+# Copy to infra/caddy/sites.d/<name>.caddy, set the real host + container name.
+sub.example.com {
+    reverse_proxy TEMPLATE_SITE:80
+}

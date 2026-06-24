@@ -1,0 +1,39 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/sites.d:/etc/caddy/sites.d:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - edge
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - internal
+    # CPU-only: host is a Ryzen 7 5700G (no discrete GPU). Use small models.
+
+volumes:
+  caddy_data:
+  caddy_config:
+  ollama_data:
+
+networks:
+  edge:
+    external: true
+    name: homelab_edge
+  internal:
+    external: true
+    name: homelab_internal
