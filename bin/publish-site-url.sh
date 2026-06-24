@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
-# Grab the current sphynx quick-tunnel URL and write it as the README's
+# Grab the CURRENT sphynx quick-tunnel URL and write it as the README's
 # managed first line in the site repo clone, then push to GitHub.
+# Reads logs only since the container's current start, so a stale URL from a
+# previous container run (logs persist across restarts) is never picked up.
 set -uo pipefail
 APP="$HOME/homelab/sites/sphynx-cattery-website/app"
 CONTAINER="sphynx-tunnel"
 README="$APP/README.md"
 MARKER="<!-- live-url -->"
 
+STARTED=$(docker inspect -f '{{.State.StartedAt}}' "$CONTAINER" 2>/dev/null || true)
 URL=""
-for i in $(seq 1 45); do
-  URL=$(docker logs "$CONTAINER" 2>&1 | grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' | tail -1)
+for i in $(seq 1 60); do
+  if [ -n "$STARTED" ]; then
+    URL=$(docker logs --since "$STARTED" "$CONTAINER" 2>&1 | grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' | tail -1)
+  else
+    URL=$(docker logs "$CONTAINER" 2>&1 | grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' | tail -1)
+  fi
   [ -n "$URL" ] && break
   sleep 2
 done
