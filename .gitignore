@@ -8,3 +8,6 @@
 # vendored app clones (each has its own GitHub repo; pulled at deploy time)
 bots/*/app/
 sites/*/app/
+
+# per-stack runtime env files
+**/*.env

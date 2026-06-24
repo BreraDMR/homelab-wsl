@@ -1,0 +1,37 @@
+# Deploy wrapper for sphynx-cattery-website (PHP/MySQL).
+# App code is the clone in ./app (gitignored; `git -C app pull` to update).
+# Runtime config lives in site.env / db.env (gitignored).
+services:
+  sphynx-site:
+    build:
+      context: .
+      dockerfile: site.Dockerfile
+    container_name: sphynx-site
+    restart: unless-stopped
+    env_file: site.env
+    depends_on:
+      - sphynx-db
+    networks:
+      - edge       # reached by central Caddy
+      - backend    # talks to its db
+
+  sphynx-db:
+    image: mariadb:11
+    container_name: sphynx-db
+    restart: unless-stopped
+    env_file: db.env
+    volumes:
+      - sphynx_db_data:/var/lib/mysql
+      - ./app/site/database.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    networks:
+      - backend
+
+volumes:
+  sphynx_db_data:
+
+networks:
+  edge:
+    external: true
+    name: homelab_edge
+  backend:
+    name: sphynx_backend
