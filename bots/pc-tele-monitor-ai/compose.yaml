@@ -8,6 +8,7 @@ services:
     env_file: ../../.env
     environment:
       - OLLAMA_URL=http://ollama:11434          # was host.docker.internal under Docker Desktop
+      - CHAT_MODEL=qwen2.5:3b                    # gemma.py reads this (default qwen2.5:3b)
       - DB_PATH=/app/data/system_monitor_bot.db
       - WHISPER_MODEL_DIR=/app/data/whisper_models
       - MONITOR_DISK_PATH=/
