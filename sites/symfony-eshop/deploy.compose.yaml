@@ -1,0 +1,58 @@
+name: eshop
+services:
+  php:
+    build:
+      context: ./app
+      dockerfile: docker/php/Dockerfile
+    container_name: eshop-php
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      APP_SECRET: "${APP_SECRET}"
+      DATABASE_URL: "postgresql://eshop:eshop@database:5432/eshop?serverVersion=16&charset=utf8"
+      PAYMENT_GATEWAY: fake
+    volumes:
+      - ./app:/var/www/app
+    depends_on:
+      database:
+        condition: service_healthy
+    networks: [eshopnet]
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: eshop-nginx
+    restart: unless-stopped
+    volumes:
+      - ./app:/var/www/app
+      - ./app/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on: [php]
+    networks: [eshopnet]
+  database:
+    image: postgres:16-alpine
+    container_name: eshop-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: eshop
+      POSTGRES_USER: eshop
+      POSTGRES_PASSWORD: eshop
+    volumes:
+      - eshop_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eshop"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [eshopnet]
+  tunnel:
+    image: ngrok/ngrok:latest
+    container_name: eshop-tunnel
+    restart: unless-stopped
+    command: http --url=footer-phoenix-nemesis.ngrok-free.dev nginx:80
+    environment:
+      NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
+    depends_on: [nginx]
+    networks: [eshopnet]
+volumes:
+  eshop_db:
+networks:
+  eshopnet:
