@@ -19,6 +19,13 @@ services:
     image: ollama/ollama:latest
     container_name: ollama
     restart: unless-stopped
+    environment:
+      # Only one model resident at a time (a 30b tier ~18GB cannot coexist with
+      # another). Idle models unload to free RAM for the other bots.
+      # Global keep_alive is just a fallback: the bots send their own per-request
+      # keep_alive (5m normally, 1h when the user enables the "memory" toggle).
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_KEEP_ALIVE=5m
     volumes:
       - ollama_data:/root/.ollama
     networks:
